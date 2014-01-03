@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-module
   type="WEB"
-  name="bittrading"
+  name="btcV1.0"
   id="myeclipse.1386650472055"
   context-root="/btcV1.0"
   j2ee-spec="5.0"
-  archive="bittrading.war">
+  archive="btcV1.0.war">
   <attributes>
     <attribute name="webrootdir" value="WebRoot" />
   </attributes>
