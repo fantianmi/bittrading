@@ -15,7 +15,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.mvc.entity.Btc_account_book;
+import com.mvc.entity.Btc_rechargeBTC_order;
 import com.mvc.entity.Btc_user;
+import com.mvc.service.IndexService;
 import com.mvc.service.RechargeService;
 import com.mvc.service.UserService;
 import com.mvc.util.CookieHelper;
@@ -25,6 +27,7 @@ import com.mvc.util.CookieHelper;
 public class IndexController {
 	@Autowired
 	private UserService us = new UserService();
+	private IndexService is = new IndexService();
 	@Autowired
 	private RechargeService rs = new RechargeService();
 	protected final transient Log log = LogFactory
@@ -59,6 +62,8 @@ public class IndexController {
 				session.setAttribute("ab_cny", abook.getAb_cny());
 			}
 		}
+		List<Object> btc_rechargeBTC_order_list = is.listBuyingOrders();
+		session.setAttribute("buyingOders", btc_rechargeBTC_order_list);
 		return "index";
 	}
 	@RequestMapping(params = "Login")

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.mvc.entity.Btc_rechargeBTC_order;
 import com.mvc.entity.Btc_rechargeCNY_order;
 import com.mvc.entity.Btc_user;
 import com.mvc.service.RechargeService;
@@ -75,21 +76,13 @@ public class RechargeController {
 		}
 	}
 	
-	@RequestMapping(params = "logout")
-	public String logout(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response){
-		HttpSession session=request.getSession();
-		CookieHelper cookieHelp = new CookieHelper();
-		Cookie cookieName=cookieHelp.removeCookie(request,"uusername");
-		Cookie cookiePassword=cookieHelp.removeCookie(request,"upassword");
-		response.addCookie(cookieName);
-		response.addCookie(cookiePassword);
-		session.removeAttribute("uusername");
-		session.removeAttribute("uname");
-		session.removeAttribute("isRegister2");
-		request.setAttribute("msg", "logoutSucess");
-		return "index";
-	}
-	
+	/**
+	 * 选择买入比特币链接，判断符合条件才能进入充值界面
+	 * @param modelmap
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@RequestMapping(params = "buybtc")
 	public String buybtc(ModelMap modelmap, HttpServletRequest request, HttpServletResponse response){
 		HttpSession session = request.getSession();
@@ -107,6 +100,13 @@ public class RechargeController {
 		}
 	}
 	
+	/**
+	 * 选择充值人民币链接，判断符合要求才能进入充值页面
+	 * @param modelmap
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@RequestMapping(params = "recharge")
 	public String recharge(ModelMap modelmap, HttpServletRequest request, HttpServletResponse response){
 		HttpSession session = request.getSession();
@@ -120,6 +120,47 @@ public class RechargeController {
 				return "register2";
 			}else{
 				return "recharge";
+			}
+		}
+	}
+	
+	/**
+	 * 生成比特币充值订单
+	 * @param modelmap
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(params = "recharge_BTC")
+	public String recharge_btc(ModelMap modelmap, HttpServletRequest request, HttpServletResponse response){
+		HttpSession session = request.getSession();
+		if(session.getAttribute("uusername").toString()== null){
+			request.setAttribute("msg", "loginfirst");
+			return "index";
+		}else{
+			String uusername = session.getAttribute("uusername").toString();
+			Btc_user user = us.getByUsername(uusername);
+			if(user.getUname()==null&&user.getUcertification()==null){
+				return "register2";
+			}else{
+				BigDecimal bro_btc_buyingRate = new BigDecimal(request.getParameter("buyingRate").toString());
+				BigDecimal bro_btc_buyQuantity = new BigDecimal(request.getParameter("buyQuantity").toString());
+				BigDecimal bro_btc_exchange = bro_btc_buyingRate.multiply(bro_btc_buyQuantity);
+				BigDecimal bro_btc_poundage = bro_btc_buyQuantity.multiply(new BigDecimal(0.002));
+				SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd hh:mm:ss");
+				String bro_btc_recharge_time = format.format(new Date());
+				
+				Btc_rechargeBTC_order bro_btc = new Btc_rechargeBTC_order();
+				bro_btc.setBro_btc_buyingRate(bro_btc_buyingRate);
+				bro_btc.setBro_btc_buyQuantity(bro_btc_buyQuantity);
+				bro_btc.setBro_btc_exchange(bro_btc_exchange);
+				bro_btc.setBro_btc_poundage(bro_btc_poundage);
+				bro_btc.setBro_btc_recharge_time(bro_btc_recharge_time);
+				bro_btc.setUid(user.getUid());
+				
+				rs.rechargeBTC(bro_btc);
+				request.setAttribute("msg", "买单已挂出");
+				return "index";
 			}
 		}
 	}

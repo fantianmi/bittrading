@@ -14,6 +14,47 @@
 <script type="text/javascript" src="scripts/jquery.galleryview.2.1.1.min.js"></script>
 <script type="text/javascript" src="scripts/jquery.galleryview.setup.js"></script>
 </head>
+<script type="text/javascript">
+    function checkForm(){
+        var theForm=document.creator;  
+        var flag=false;
+              
+        if(theForm.buyingRate == "0"){
+            alert("买入价不能为0");
+            theForm.buyingRate.focus();
+            return false;
+        }
+        if(theForm.buyQuantity.value=="0"){
+            alert("买入数量不能为0");
+            theForm.buyQuantity.focus();
+            return false;
+        }
+        else if(theForm.exchange.value=="0"){
+            alert("兑换额不能为0");
+            theForm.exchange.focus();
+            return false;
+        }
+    }
+    
+    function caculateEx(x){
+        document.getElementById("exchange").value = (document.getElementById("buyingRate").value) * (document.getElementById(x).value);
+        document.getElementById("poundage").value = document.getElementById("buyQuantity").value * 0.002;
+    }
+    function caculateBQ(){
+        document.getElementById("buyQuantity").value = document.getElementById("exchange").value / document.getElementById("buyingRate").value;
+        document.getElementById("poundage").value = document.getElementById("buyQuantity").value * 0.002;
+    }
+    
+    function scaculateEx(x){
+        document.getElementById("sexchange").value = (document.getElementById("sellingRate").value) * (document.getElementById(x).value);
+        document.getElementById("spoundage").value = document.getElementById("sellQuantity").value * 0.002;
+    }
+    function scaculateBQ(){
+        document.getElementById("sellQuantity").value = document.getElementById("sexchange").value / document.getElementById("sellingRate").value;
+        document.getElementById("spoundage").value = document.getElementById("sellQuantity").value * 0.002;
+    }
+
+</script>
 <body id="top">
 <jsp:include page="/include/headhtml.jsp"></jsp:include>
 <!-- #########################wrapper1 area######################################################### -->
@@ -33,6 +74,7 @@
    <div id="hpage_cats">
 	 <!--************buy fence**************-->
 		<div class="fl_right">
+		  <form action="<%=request.getContextPath() %>/recharge.htm?recharge_BTC" method="post" onSubmit="JavaScript:return checkForm();">
 		  <h2><a href="#">买入BTC &raquo;</a></h2>
 		  <table summary="Summary Here" cellpadding="0" cellspacing="0">
 			<tbody>
@@ -43,41 +85,40 @@
 			  </tr>
 			  <tr class="dark">
 				<td>当前余额</td>
-				<td>0.0000</td>
+				<td>฿<%=session.getAttribute("ab_btc").toString() %></td>
 				<td>BTC</td>
 			  </tr>
 			  <tr class="dark">
 				<td>可兑换额</td>
-				<td>0.00</td>
+				<td>¥<%=session.getAttribute("ab_cny").toString() %>元整</td>
 				<td>CNY</td>
 			  </tr>
 			  <tr class="dark">
 				<td>买入价</td>
-				<td>Value 14</td>
+				<td><input type="text" name="buyingRate" id="buyingRate" value="5662.20"></td>
 				<td>CNY/BTC</td>
 			  </tr>
 			  <tr class="dark">
 				<td>买入量</td>
-				<td>Value 14</td>
+				<td><input type="text" name="buyQuantity" id="buyQuantity" value="0" onkeyup="caculateEx(this.id);"></td>
 				<td>BTC</td>
 			  </tr>
 			  <tr class="dark">
 				<td>兑换额</td>
-				<td>Value 14</td>
+				<td><input type="text" name="exchange" id="exchange" value="0" onkeyup="caculateBQ();"></td>
 				<td>CNY</td>
 			  </tr>
 			  <tr class="dark">
 				<td>手续费</td>
-				<td>0</td>
-				<td>BTC(0%)</td>
+				<td><input type="text" name="poundage" id="poundage" readonly="readonly" value="0"></td>
+				<td>BTC(0.2%)</td>
 			  </tr>
 			  <tr class="dark">
-				<td>.</td>
-				<td>.</td>
-				<td>.</td>
+				<td colspan="3"><input type="submit" value="买入（CNY->BTC）"></td>
 			  </tr>
 			</tbody>
 		  </table>
+		  </form>
     </div>
      <!--************/buy fence**************-->
 	 <!--************sale fence*************-->
@@ -92,38 +133,36 @@
           </tr>
           <tr class="dark">
             <td>当前余额</td>
-            <td>0.0000</td>
+            <td>฿<%=session.getAttribute("ab_btc").toString() %></td>
             <td>BTC</td>
           </tr>
           <tr class="dark">
             <td>可兑换额</td>
-            <td>0.00</td>
+            <td>¥<%=session.getAttribute("ab_cny").toString() %>元整</td>
             <td>CNY</td>
           </tr>
           <tr class="dark">
-            <td>卖出价</td>
-            <td>Value 14</td>
-            <td>CNY/BTC</td>
-          </tr>
+			<td>卖出价</td>
+			<td><input type="text" name="sellingRate" id="sellingRate" value="5662.20"></td>
+			<td>CNY/BTC</td>
+		  </tr>
 		  <tr class="dark">
-            <td>卖出量</td>
-            <td>Value 14</td>
-            <td>BTC</td>
-          </tr>
+			<td>卖出量</td>
+			<td><input type="text" name="sellQuantity" id="sellQuantity" value="0" onkeyup="scaculateEx(this.id);"></td>
+			<td>BTC</td>
+		  </tr>
 		  <tr class="dark">
-            <td>兑换额</td>
-            <td>Value 14</td>
-            <td>CNY</td>
-          </tr>
+			<td>兑换额</td>
+			<td><input type="text" name="sexchange" id="sexchange" value="0" onkeyup="scaculateBQ();"></td>
+			<td>CNY</td>
+		  </tr>
 		  <tr class="dark">
-            <td>手续费</td>
-            <td>0</td>
-            <td>BTC(0%)</td>
-          </tr>
+			<td>手续费</td>
+			<td><input type="text" name="spoundage" id="spoundage" readonly="readonly" value="0"></td>
+			<td>BTC(0.2%)</td>
+		  </tr>
 		  <tr class="dark">
-            <td>.</td>
-            <td>.</td>
-            <td>.</td>
+           <td colspan="3"><input type="submit" value="卖出（BTC->CNY）"></td>
           </tr>
         </tbody>
       </table>
@@ -134,6 +173,7 @@
     <div class="fl_right">
       <h2><a href="#">买单 &raquo;</a></h2>
       <table summary="Summary Here" cellpadding="0" cellspacing="0">
+      <%List<Object> alist1 = (List<Article>)request.getSession().getAttribute("alist1"); %>
         <thead>
           <tr>
             <th width="26%">买入价</th>

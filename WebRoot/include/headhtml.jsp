@@ -37,6 +37,11 @@
  alert("登陆后才能进行此操作！");
  location.href="<%=request.getContextPath() %>/index.htm";
 </script>
+<%}else{%>
+<script type="text/javascript">
+ alert(request.getAttribute("msg").toString());
+ location.href="<%=request.getContextPath() %>/index.htm";
+</script>	
 <%} %>
 <div class="wrapper col0">
   <div id="topline">
