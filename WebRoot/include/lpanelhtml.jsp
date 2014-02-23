@@ -49,7 +49,7 @@
 	          <li><a href="#">总资产折合人民币</a>
 	            <ul>
 				  <li>&nbsp;</li>
-	              <li>¥0.00 元</li>
+	              <li>¥<%=session.getAttribute("total_assets").toString()%>元</li>
 				  <li>&nbsp;</li> 
 	            </ul>
 	          </li>

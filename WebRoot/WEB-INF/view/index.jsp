@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8" import="java.math.BigDecimal"%>
 <%@ include file="/include/head.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="EN" lang="EN" dir="ltr">
@@ -15,7 +15,7 @@
 <script type="text/javascript" src="scripts/jquery.galleryview.setup.js"></script>
 </head>
 <script type="text/javascript">
-    function checkForm(){
+    function checkFormRecharge(){
         var theForm=document.creator;  
         var flag=false;
               
@@ -29,29 +29,60 @@
             theForm.buyQuantity.focus();
             return false;
         }
-        else if(theForm.exchange.value=="0"){
+        if(theForm.exchange.value=="0"){
             alert("兑换额不能为0");
             theForm.exchange.focus();
             return false;
         }
     }
     
+    function checkFormSell(){
+        var theForm=document.creator;  
+        var flag=false;
+              
+        if(theForm.sellingRate == "0"){
+            alert("卖出价不能为0");
+            theForm.sellingRate.focus();
+            return false;
+        }
+        if(theForm.sellQuantity.value=="0"){
+            alert("卖出数量不能为0");
+            theForm.sellQuantity.focus();
+            return false;
+        }
+        if(theForm.sexchange.value=="0"){
+            alert("兑换额不能为0");
+            theForm.sexchange.focus();
+            return false;
+        }
+    }
+    
+    function caculateEx_BQ_Pound(x){
+        document.getElementById("exchange").value = (document.getElementById("buyQuantity").value) * (document.getElementById(x).value);
+        document.getElementById("poundage").value = document.getElementById("exchange").value * 0.002;
+    }
+    
     function caculateEx(x){
         document.getElementById("exchange").value = (document.getElementById("buyingRate").value) * (document.getElementById(x).value);
-        document.getElementById("poundage").value = document.getElementById("buyQuantity").value * 0.002;
+        document.getElementById("poundage").value = document.getElementById("exchange").value * 0.002;
     }
     function caculateBQ(){
         document.getElementById("buyQuantity").value = document.getElementById("exchange").value / document.getElementById("buyingRate").value;
-        document.getElementById("poundage").value = document.getElementById("buyQuantity").value * 0.002;
+        document.getElementById("poundage").value = document.getElementById("exchange").value * 0.002;
+    }
+    
+    function scaculateEx_BQ_Pound(x){
+    	document.getElementById("sexchange").value = (document.getElementById("sellQuantity").value) * (document.getElementById(x).value);
+        document.getElementById("spoundage").value = document.getElementById("sexchange").value * 0.002;
     }
     
     function scaculateEx(x){
         document.getElementById("sexchange").value = (document.getElementById("sellingRate").value) * (document.getElementById(x).value);
-        document.getElementById("spoundage").value = document.getElementById("sellQuantity").value * 0.002;
+        document.getElementById("spoundage").value = document.getElementById("sexchange").value * 0.002;
     }
     function scaculateBQ(){
         document.getElementById("sellQuantity").value = document.getElementById("sexchange").value / document.getElementById("sellingRate").value;
-        document.getElementById("spoundage").value = document.getElementById("sellQuantity").value * 0.002;
+        document.getElementById("spoundage").value = document.getElementById("sexchange").value * 0.002;
     }
 
 </script>
@@ -74,28 +105,44 @@
    <div id="hpage_cats">
 	 <!--************buy fence**************-->
 		<div class="fl_right">
-		  <form action="<%=request.getContextPath() %>/recharge.htm?recharge_BTC" method="post" onSubmit="JavaScript:return checkForm();">
+		<%
+		BigDecimal bestBid = null;
+		if(session.getAttribute("sellOders")!=null){
+			ArrayList<Btc_sellBTC_order> toGetBestOffer = (ArrayList<Btc_sellBTC_order>)session.getAttribute("sellOders");
+			bestBid = toGetBestOffer.get(0).getBso_btc_sellRate();
+		}else{
+			bestBid = new BigDecimal(session.getAttribute("latestDealOrder").toString());
+			} %>
+		  <form action="<%=request.getContextPath() %>/recharge.htm?recharge_BTC" method="post" onSubmit="JavaScript:return checkFormRecharge();">
 		  <h2><a href="#">买入BTC &raquo;</a></h2>
 		  <table summary="Summary Here" cellpadding="0" cellspacing="0">
 			<tbody>
 			  <tr class="dark">
 				<td>最佳买价</td>
-				<td>5662.20</td>
+				<td><%=bestBid %></td>
 				<td>CNY/BTC</td>
 			  </tr>
 			  <tr class="dark">
 				<td>当前余额</td>
+				<%if(session.getAttribute("ab_btc")!=null){%>
 				<td>฿<%=session.getAttribute("ab_btc").toString() %></td>
+				<%}else{%>
+				<td>฿ 0.0000</td>	
+				<%} %>
 				<td>BTC</td>
 			  </tr>
 			  <tr class="dark">
 				<td>可兑换额</td>
+				<%if(session.getAttribute("ab_cny")!=null){%>
 				<td>¥<%=session.getAttribute("ab_cny").toString() %>元整</td>
+				<%}else{%>
+				<td>¥0.00元整</td>
+				<%}%>
 				<td>CNY</td>
 			  </tr>
 			  <tr class="dark">
 				<td>买入价</td>
-				<td><input type="text" name="buyingRate" id="buyingRate" value="5662.20"></td>
+				<td><input type="text" name="buyingRate" id="buyingRate" value="<%=bestBid %>" onkeyup="caculateEx_BQ_Pound(this.id);"></td>
 				<td>CNY/BTC</td>
 			  </tr>
 			  <tr class="dark">
@@ -123,27 +170,44 @@
      <!--************/buy fence**************-->
 	 <!--************sale fence*************-->
 	<div class="fl_right">
+	<%
+	BigDecimal bestOffer = null;
+	if(session.getAttribute("buyingOders")!=null){
+		ArrayList<Btc_rechargeBTC_order> toGetBestBid = (ArrayList<Btc_rechargeBTC_order>)session.getAttribute("buyingOders");
+		bestOffer = toGetBestBid.get(0).getBro_btc_buyingRate();
+	}else{
+		bestOffer = new BigDecimal(session.getAttribute("latestDealOrder").toString());
+	}%>
+	<form action="<%=request.getContextPath() %>/sell.htm?sell_BTC" method="post" onSubmit="JavaScript:return checkFormSell();">
       <h2><a href="#">卖出BTC &raquo;</a></h2>
       <table summary="Summary Here" cellpadding="0" cellspacing="0">
         <tbody>
           <tr class="dark">
             <td>最佳卖价</td>
-            <td>5662.20</td>
+            <td><%=bestOffer %></td>
             <td>CNY/BTC</td>
           </tr>
           <tr class="dark">
             <td>当前余额</td>
+            <%if(session.getAttribute("ab_btc")!=null){%>
             <td>฿<%=session.getAttribute("ab_btc").toString() %></td>
+            <%}else{%>
+            <td>฿0.0000</td>
+            <%} %>
             <td>BTC</td>
           </tr>
           <tr class="dark">
             <td>可兑换额</td>
+            <%if(session.getAttribute("ab_cny")!=null){%>
             <td>¥<%=session.getAttribute("ab_cny").toString() %>元整</td>
+            <%}else{%>
+            <td>¥0.00元整</td>	
+            <%} %>
             <td>CNY</td>
           </tr>
           <tr class="dark">
 			<td>卖出价</td>
-			<td><input type="text" name="sellingRate" id="sellingRate" value="5662.20"></td>
+			<td><input type="text" name="sellingRate" id="sellingRate" value="<%=bestOffer %>"></td>
 			<td>CNY/BTC</td>
 		  </tr>
 		  <tr class="dark">
@@ -166,6 +230,7 @@
           </tr>
         </tbody>
       </table>
+      </form>
     </div>
      <!--************/sale fence*************-->
 	 <br class="clear" />
@@ -173,7 +238,6 @@
     <div class="fl_right">
       <h2><a href="#">买单 &raquo;</a></h2>
       <table summary="Summary Here" cellpadding="0" cellspacing="0">
-      <%List<Object> alist1 = (List<Article>)request.getSession().getAttribute("alist1"); %>
         <thead>
           <tr>
             <th width="26%">买入价</th>
@@ -182,56 +246,32 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="light">
-            <td>Value 1</td>
-            <td>Value 2</td>
-            <td>Value 3</td>
-          </tr>
-          <tr class="dark">
-            <td>Value 5</td>
-            <td>Value 6</td>
-            <td>Value 7</td>
-          </tr>
-          <tr class="light">
-            <td>Value 9</td>
-            <td>Value 10</td>
-            <td>Value 11</td>
-          </tr>
-          <tr class="dark">
-            <td>Value 13</td>
-            <td>Value 14</td>
-            <td>Value 15</td>
-          </tr>
-		  <tr class="light">
-            <td>Value 9</td>
-            <td>Value 10</td>
-            <td>Value 11</td>
-          </tr>
-          <tr class="dark">
-            <td>Value 13</td>
-            <td>Value 14</td>
-            <td>Value 15</td>
-          </tr>
-		  <tr class="light">
-            <td>Value 9</td>
-            <td>Value 10</td>
-            <td>Value 11</td>
-          </tr>
-          <tr class="dark">
-            <td>Value 13</td>
-            <td>Value 14</td>
-            <td>Value 15</td>
-          </tr>
-		  <tr class="light">
-            <td>Value 9</td>
-            <td>Value 10</td>
-            <td>Value 11</td>
-          </tr>
-          <tr class="dark">
-            <td>Value 13</td>
-            <td>Value 14</td>
-            <td>Value 15</td>
-          </tr>
+        <%if(session.getAttribute("buyingOders")!=null){
+          ArrayList<Btc_rechargeBTC_order> btc_rechargeBTC_order_Lists = (ArrayList<Btc_rechargeBTC_order>)session.getAttribute("buyingOders");
+          for(int i=0;i<btc_rechargeBTC_order_Lists.size();i++){
+          	Btc_rechargeBTC_order btc_rechargeBTC_order = btc_rechargeBTC_order_Lists.get(i);
+          	if(i%2==0){%>
+          	<tr class="light">
+              <td><%=btc_rechargeBTC_order.getBro_btc_buyingRate()%></td>
+              <td><%=btc_rechargeBTC_order.getBro_btc_buyQuantity() %></td>
+              <td><%=btc_rechargeBTC_order.getBro_btc_exchange() %></td>
+            </tr>
+          <%		
+          	}else{%>
+          	<tr class="dark">
+              <td><%=btc_rechargeBTC_order.getBro_btc_buyingRate()%></td>
+              <td><%=btc_rechargeBTC_order.getBro_btc_buyQuantity() %></td>
+              <td><%=btc_rechargeBTC_order.getBro_btc_exchange() %></td>
+            </tr>
+          <%}
+          }
+         }else{%>
+        	<tr class="light">
+              <td>暂无记录</td>
+              <td>暂无记录</td>
+              <td>暂无记录</td>
+            </tr>
+         <%}%>
         </tbody>
       </table>
     </div>
@@ -248,56 +288,32 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="light">
-            <td>Value 1</td>
-            <td>Value 2</td>
-            <td>Value 3</td>
-          </tr>
-          <tr class="dark">
-            <td>Value 5</td>
-            <td>Value 6</td>
-            <td>Value 7</td>
-          </tr>
-          <tr class="light">
-            <td>Value 9</td>
-            <td>Value 10</td>
-            <td>Value 11</td>
-          </tr>
-          <tr class="dark">
-            <td>Value 13</td>
-            <td>Value 14</td>
-            <td>Value 15</td>
-          </tr>
-		  <tr class="light">
-            <td>Value 9</td>
-            <td>Value 10</td>
-            <td>Value 11</td>
-          </tr>
-          <tr class="dark">
-            <td>Value 13</td>
-            <td>Value 14</td>
-            <td>Value 15</td>
-          </tr>
-		  <tr class="light">
-            <td>Value 9</td>
-            <td>Value 10</td>
-            <td>Value 11</td>
-          </tr>
-          <tr class="dark">
-            <td>Value 13</td>
-            <td>Value 14</td>
-            <td>Value 15</td>
-          </tr>
-		  <tr class="light">
-            <td>Value 9</td>
-            <td>Value 10</td>
-            <td>Value 11</td>
-          </tr>
-          <tr class="dark">
-            <td>Value 13</td>
-            <td>Value 14</td>
-            <td>Value 15</td>
-          </tr>
+          <%if(session.getAttribute("sellOders")!=null){
+          ArrayList<Btc_sellBTC_order> btc_sellBTC_order_Lists = (ArrayList<Btc_sellBTC_order>)session.getAttribute("sellOders");
+          for(int i=0;i<btc_sellBTC_order_Lists.size();i++){
+          	Btc_sellBTC_order btc_sellBTC_order = btc_sellBTC_order_Lists.get(i);
+          	if(i%2==0){%>
+          	<tr class="light">
+              <td><%=btc_sellBTC_order.getBso_btc_sellRate()%></td>
+              <td><%=btc_sellBTC_order.getBso_btc_sellQuantity() %></td>
+              <td><%=btc_sellBTC_order.getBso_btc_exchange() %></td>
+            </tr>
+          <%		
+          	}else{%>
+          	<tr class="dark">
+              <td><%=btc_sellBTC_order.getBso_btc_sellRate()%></td>
+              <td><%=btc_sellBTC_order.getBso_btc_sellQuantity() %></td>
+              <td><%=btc_sellBTC_order.getBso_btc_exchange() %></td>
+            </tr>
+          <%}
+          }
+         }else{%>
+        	<tr class="light">
+              <td>暂无记录</td>
+              <td>暂无记录</td>
+              <td>暂无记录</td>
+            </tr>
+         <%}%>
 		  
         </tbody>
       </table>

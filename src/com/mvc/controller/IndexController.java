@@ -1,5 +1,6 @@
 package com.mvc.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -15,8 +16,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.mvc.entity.Btc_account_book;
-import com.mvc.entity.Btc_rechargeBTC_order;
+import com.mvc.entity.Btc_deal_list;
 import com.mvc.entity.Btc_user;
+import com.mvc.service.AccountService;
+import com.mvc.service.DealService;
 import com.mvc.service.IndexService;
 import com.mvc.service.RechargeService;
 import com.mvc.service.UserService;
@@ -27,9 +30,15 @@ import com.mvc.util.CookieHelper;
 public class IndexController {
 	@Autowired
 	private UserService us = new UserService();
+	@Autowired
 	private IndexService is = new IndexService();
 	@Autowired
+	private AccountService as = new AccountService();
+	@Autowired
 	private RechargeService rs = new RechargeService();
+	@Autowired
+	private DealService ds = new DealService();
+	
 	protected final transient Log log = LogFactory
 	.getLog(IndexController.class);
 	
@@ -53,17 +62,37 @@ public class IndexController {
 			session.setAttribute("uusername", user.getUusername());
 			session.setAttribute("uname", user.getUname());
 			session.setAttribute("uid", user.getUid());
-			Btc_account_book abook = rs.getByUidForAcount(user.getUid());
+			Btc_account_book abook = as.getByUidForAcount(user.getUid());
 			if(abook == null){
 				session.setAttribute("ab_cny", "0.00");
-				session.setAttribute("ab_btc", "0.00");
+				session.setAttribute("ab_btc", "0.0000");
+				session.setAttribute("total_assets", "0.00");
 			}else{
-				session.setAttribute("ab_btc", abook.getAb_btc());
-				session.setAttribute("ab_cny", abook.getAb_cny());
+				BigDecimal ab_cny_show = abook.getAb_cny().setScale(2, BigDecimal.ROUND_HALF_UP); 
+				BigDecimal ab_btc_show = abook.getAb_btc().setScale(4, BigDecimal.ROUND_HALF_UP); 
+				Btc_deal_list bdl = ds.queryLatestDealOrder();
+				BigDecimal latestDealOrder = bdl.getBtc_deal_Rate();
+				BigDecimal total_assets_show = ab_btc_show.multiply(latestDealOrder).add(ab_cny_show).setScale(2, BigDecimal.ROUND_HALF_UP);
+				session.setAttribute("ab_cny", ab_cny_show);
+				session.setAttribute("ab_btc", ab_btc_show);
+				session.setAttribute("total_assets", total_assets_show);
 			}
 		}
-		List<Object> btc_rechargeBTC_order_list = is.listBuyingOrders();
-		session.setAttribute("buyingOders", btc_rechargeBTC_order_list);
+		if(is.listBuyingOrders()!=null){
+			List<Object> btc_rechargeBTC_order_list = is.listBuyingOrders();
+			session.setAttribute("buyingOders", btc_rechargeBTC_order_list);
+		}else{
+			session.setAttribute("buyingOders", null);
+		}
+		if(is.listSellOrders()!=null){
+			List<Object> btc_sellBTC_order_list = is.listSellOrders();
+			session.setAttribute("sellOders", btc_sellBTC_order_list);
+		}else{
+			Btc_deal_list bdl = ds.queryLatestDealOrder();
+			BigDecimal latestDealOrder = bdl.getBtc_deal_Rate();
+			session.setAttribute("latestDealOrder", latestDealOrder);
+			session.setAttribute("sellOders", null);
+		}
 		return "index";
 	}
 	@RequestMapping(params = "Login")
@@ -84,10 +113,15 @@ public class IndexController {
 		Cookie cookiePassword=cookieHelp.removeCookie(request,"upassword");
 		response.addCookie(cookieName);
 		response.addCookie(cookiePassword);
+		String username = session.getAttribute("uusername").toString();
 		session.removeAttribute("uusername");
 		session.removeAttribute("uname");
 		session.removeAttribute("isRegister2");
-		request.setAttribute("msg", "logoutSucess");
+		session.removeAttribute("ab_cny");
+		session.removeAttribute("ab_btc");
+		log.info(username+"已安全退出");
+		request.setAttribute("msg", "已安全退出");
+		request.setAttribute("href", "index.htm");
 		return "index";
 	}
 	
@@ -95,7 +129,8 @@ public class IndexController {
 	public String buybtc(ModelMap modelmap, HttpServletRequest request, HttpServletResponse response){
 		HttpSession session = request.getSession();
 		if(session.getAttribute("uusername").toString()== null){
-			request.setAttribute("msg", "loginfirst");
+			request.setAttribute("msg", "登陆后才能进行此操作！");
+			request.setAttribute("href", "index.htm");
 			return "index";
 		}else{
 			String uusername = session.getAttribute("uusername").toString();
@@ -112,7 +147,8 @@ public class IndexController {
 	public String recharge(ModelMap modelmap, HttpServletRequest request, HttpServletResponse response){
 		HttpSession session = request.getSession();
 		if(session.getAttribute("uusername").toString()== null){
-			request.setAttribute("msg", "loginfirst");
+			request.setAttribute("msg", "登陆后才能进行此操作！");
+			request.setAttribute("href", "index.htm");
 			return "index";
 		}else{
 			String uusername = session.getAttribute("uusername").toString();

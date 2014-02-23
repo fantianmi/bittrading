@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "btc_rechargeCNY_order")
+@Table(name = "btc_rechargeBTC_order")
 public class Btc_rechargeBTC_order implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -30,10 +30,35 @@ public class Btc_rechargeBTC_order implements Serializable {
 	private BigDecimal bro_btc_poundage;
 	@Column(name="bro_btc_recharge_time")
 	private String bro_btc_recharge_time;
+	@Column(name="bro_btc_recharge_success_time")
+	private String bro_btc_recharge_sucess_time;
+	
+	public String getBro_btc_recharge_sucess_time() {
+		return bro_btc_recharge_sucess_time;
+	}
+
+
+	public void setBro_btc_recharge_sucess_time(String bro_btc_recharge_sucess_time) {
+		this.bro_btc_recharge_sucess_time = bro_btc_recharge_sucess_time;
+	}
+
+
+	public int getBro_btc_pay_state() {
+		return bro_btc_pay_state;
+	}
+
+
+	public void setBro_btc_pay_state(int bro_btc_pay_state) {
+		this.bro_btc_pay_state = bro_btc_pay_state;
+	}
+
+
 	@Column(name="bro_btc_remark")
 	private String bro_btc_remark;
 	@Column(name="bro_btc_state")
 	private int bro_btc_state;
+	@Column(name="bro_btc_pay_state")
+	private int bro_btc_pay_state;
 	@Column(name="uid")
 	private int uid;
 

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mvc.dao.EntityDao;
-import com.mvc.entity.Btc_account_book;
 import com.mvc.entity.Btc_rechargeBTC_order;
 import com.mvc.entity.Btc_rechargeCNY_order;
 
@@ -43,7 +42,7 @@ public class RechargeService {
 	 * @return
 	 */
 	public List<Object> getByUidForBTCOrders(int uid){
-		List<Object> list = entityDao.createQuery("SELECT BRO_BTC FROM BTC_RECHARGEBTC_ORDER BRO_BTC WHERE BRO_BTC.UID='" + uid + "'");
+		List<Object> list = entityDao.createQuery("SELECT bro_btc FROM Btc_rechargeBTC_order bro_btc WHERE bro_btc.uid='" + uid + "'");
 		if (list.size() != 0) {
 			return list;
 		}else{
@@ -74,28 +73,12 @@ public class RechargeService {
 	 */
 	public Btc_rechargeBTC_order getByBroIdForBTCOrders(int bro_btc_id){
 		Btc_rechargeBTC_order bro_btc = new Btc_rechargeBTC_order();
-		List<Object> list = entityDao.createQuery("SELECT BRO_BTC FROM BTC_RECHARGEBTC_ORDER BRO WHERE BRO_BTC.BRO_BTC_ID='" + bro_btc_id + "'");
+		List<Object> list = entityDao.createQuery("SELECT bro_btc FROM Btc_rechargeBTC_order bro_btc WHERE bro_btc.bro_btc_id='" + bro_btc_id + "'");
 		if (list.size() != 0) {
 			bro_btc = (Btc_rechargeBTC_order) list.get(0);
 			return bro_btc;
 		}else{
 			return bro_btc=null;
-		}	
-	}
-	
-	/**
-	 * 根据用户id查询对应账本信息
-	 * @param uid
-	 * @return
-	 */
-	public Btc_account_book getByUidForAcount(int uid){
-		Btc_account_book bab = new Btc_account_book();
-		List<Object> list = entityDao.createQuery("select bab from Btc_account_book bab where bab.uid='" + uid + "'");
-		if (list.size() != 0) {
-			bab = (Btc_account_book)list.get(0);
-			return bab;
-		}else{
-			return bab = null;
 		}	
 	}
 	

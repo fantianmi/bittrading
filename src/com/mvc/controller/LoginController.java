@@ -29,7 +29,8 @@ public class LoginController {
 		flag = us.vertify(uusername, upassword);
 		if(uusername!=null&&upassword!=null){
 			if (flag == true) {
-				request.setAttribute("msg", "loginSucess");
+				request.setAttribute("msg", "欢迎回来!点击[确定]回到首页");
+				request.setAttribute("href", "index.htm");
 				CookieHelper cookieHelp = new CookieHelper();
 				Cookie cookieName = null;
 				Cookie cookiePassword = null;

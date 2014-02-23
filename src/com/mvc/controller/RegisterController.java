@@ -53,7 +53,8 @@ public class RegisterController {
 			user.setUemail(uemail);
 			try{
 				us.register_step1(user);
-				request.setAttribute("msg", "registerSucess");
+				request.setAttribute("msg", "注册成功!点击[确定]回到首页");
+				request.setAttribute("href", "index.htm");
 				return "index";
 			}
 			catch(Exception e){
@@ -88,7 +89,8 @@ public class RegisterController {
 		user.setUcertification(ucertification);
 		user.setUcertificationcategory(ucertificationcategory);
 		us.register_step2(user);
-		request.setAttribute("msg", "promotesuccess");
+		request.setAttribute("msg", "谢谢完善资料，现在您可以开始自由交易了!点击[确定]回到首页");
+		request.setAttribute("href", "index.htm");
 		
 		return "index";
 	}

@@ -1,47 +1,16 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@ page import="com.mvc.entity.*" %>
 <%if(request.getAttribute("msg")==null){
-	
-}else if(request.getAttribute("msg").toString() == "registerSucess"){%>
+}else{
+String msg = request.getAttribute("msg").toString();
+String href = null;
+%>
 <script type="text/javascript">
- alert("注册成功!点击[确定]回到首页");
- location.href="<%=request.getContextPath() %>/index.htm";
+ alert("<%=msg%>");
+ <%if(request.getAttribute("href")!=null){ href = request.getAttribute("href").toString();%>
+	 location.href="<%=request.getContextPath() %>/<%=href%>";
+ <%}%>
 </script>
-<%}else if(request.getAttribute("msg").toString() == "loginSucess"){%>
-<script type="text/javascript">
- alert("欢迎回来!点击[确定]回到首页");
- location.href="<%=request.getContextPath() %>/index.htm";
-</script>
-<%}else if(request.getAttribute("msg").toString() == "promotesuccess"){%>
-<script type="text/javascript">
- alert("谢谢完善资料，现在您可以开始自由交易了!点击[确定]回到首页");
- location.href="<%=request.getContextPath() %>/index.htm";
-</script>
-<%}else if(request.getAttribute("msg").toString() == "logoutSucess"){%>
-<script type="text/javascript">
- alert("已安全退出");
- location.href="<%=request.getContextPath() %>/index.htm";
-</script>
-<%}else if(request.getAttribute("msg").toString() == "utpasswordwrong"){%>
-<script type="text/javascript">
- alert("交易密码输入错误，请确认后重新输入");
- location.href="<%=request.getContextPath() %>/index.htm";
-</script>
-<%}else if(request.getAttribute("msg").toString() == "rechargesucess"){%>
-<script type="text/javascript">
- alert("恭喜您，充值成功！我们确认收到您的汇款之后会立即给您充入到平台账户中");
- location.href="<%=request.getContextPath() %>/index.htm";
-</script>
-<%}else if(request.getAttribute("msg").toString() == "loginfirst"){%>
-<script type="text/javascript">
- alert("登陆后才能进行此操作！");
- location.href="<%=request.getContextPath() %>/index.htm";
-</script>
-<%}else{%>
-<script type="text/javascript">
- alert(request.getAttribute("msg").toString());
- location.href="<%=request.getContextPath() %>/index.htm";
-</script>	
 <%} %>
 <div class="wrapper col0">
   <div id="topline">
