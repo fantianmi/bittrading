@@ -46,6 +46,9 @@ public class IndexController {
 	public String load(ModelMap modelMap, HttpServletRequest request){
 		CookieHelper cookieHelp = new CookieHelper();
 		HttpSession session = request.getSession();
+		Btc_deal_list bdl_show = ds.queryLatestDealOrder();
+		BigDecimal latestDealOrder_show = bdl_show.getBtc_deal_Rate();
+		session.setAttribute("latestDealOrder", latestDealOrder_show);
 		boolean cookie_username_flag = false;
 		boolean cookie_password_flag = false;
 		cookie_username_flag = cookieHelp.searchCookie(request,"uusername");
@@ -89,8 +92,6 @@ public class IndexController {
 			session.setAttribute("sellOders", btc_sellBTC_order_list);
 		}else{
 			Btc_deal_list bdl = ds.queryLatestDealOrder();
-			BigDecimal latestDealOrder = bdl.getBtc_deal_Rate();
-			session.setAttribute("latestDealOrder", latestDealOrder);
 			session.setAttribute("sellOders", null);
 		}
 		return "index";
@@ -125,7 +126,7 @@ public class IndexController {
 		return "index";
 	}
 	
-	@RequestMapping(params = "buybtc")
+	@RequestMapping(params = "rechargeBTC")
 	public String buybtc(ModelMap modelmap, HttpServletRequest request, HttpServletResponse response){
 		HttpSession session = request.getSession();
 		if(session.getAttribute("uusername").toString()== null){
@@ -138,7 +139,7 @@ public class IndexController {
 			if(user.getUname()==null&&user.getUcertification()==null){
 				return "register2";
 			}else{
-				return "buybtc";
+				return "rechargeBTC";
 			}
 		}
 	}
@@ -160,6 +161,24 @@ public class IndexController {
 				List<Object> listOrder = rs.getByUidForOrders(uid);
 				modelmap.put("listOrder", listOrder);
 				return "rechargeCNY";
+			}
+		}
+	}
+	
+	@RequestMapping(params = "withdrawCNY")
+	public String recharge(HttpServletRequest request, HttpServletResponse response){
+		HttpSession session = request.getSession();
+		if(session.getAttribute("uusername").toString()== null){
+			request.setAttribute("msg", "登陆后才能进行此操作！");
+			request.setAttribute("href", "index.htm");
+			return "index";
+		}else{
+			String uusername = session.getAttribute("uusername").toString();
+			Btc_user user = us.getByUsername(uusername);
+			if(user.getUname()==null&&user.getUcertification()==null){
+				return "register2";
+			}else{
+				return "withdrawCNY";
 			}
 		}
 	}

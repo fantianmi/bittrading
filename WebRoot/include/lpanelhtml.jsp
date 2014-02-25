@@ -56,8 +56,6 @@
     	 <%} %>
     	 <li><a href="#">交易</a>
             <ul>
-              <li><a href="index.htm?buybtc">买入比特币</a></li>
-              <li><a href="#">卖出比特币</a> </li>
               <li><a href="#">委托管理</a> </li>
 			  <li><a href="#">交易查询</a> </li>
 			  <li><a href="#">全站交易历史</a> </li>
@@ -70,8 +68,8 @@
 		  <li><a href="#">账户管理</a>
             <ul>
               <li><a href="index.htm?recharge">人民币充值</a></li>
-              <li><a href="#">人民币提现</a></li>
-			  <li><a href="#">比特币充值</a></li>
+              <li><a href="index.htm?withdrawCNY">人民币提现</a></li>
+			  <li><a href="index.htm?rechargeBTC">比特币充值</a></li>
               <li><a href="#">比特币提现</a></li>
 			  <li><a href="#">API访问</a></li>
             </ul>
