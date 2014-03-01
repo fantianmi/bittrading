@@ -8,6 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="imagetoolbar" content="no" />
 <link rel="stylesheet" href="styles/layout.css" type="text/css" />
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
 <script type="text/javascript" src="scripts/jquery-1.4.1.min.js"></script>
 <script type="text/javascript" src="scripts/jquery.easing.1.3.js"></script>
 <script type="text/javascript" src="scripts/jquery.timers.1.2.js"></script>

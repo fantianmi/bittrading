@@ -7,6 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="imagetoolbar" content="no" />
 <link rel="stylesheet" href="styles/layout.css" type="text/css" />
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
 </head>
 <body id="top">
 <jsp:include page="/include/headhtml.jsp"></jsp:include>
@@ -46,7 +47,7 @@
         </form>
 		<p><h5>还不是比特币交易中心用户？</h5></p>
 		<p>现在免费注册成为比特币用户，便能立刻享受快捷方面的比特币交易服务,快来加入吧。</p>
-		<input name="reset" type="reset" id="reset" tabindex="5" value="注册" onclick="javascript:location.href='vertify.htm?Register'"/>
+		<input name="reset" type="reset" id="reset" tabindex="5" value="注册" onClick="javascript:location.href='vertify.htm?Register'"/>
       </div>
     </div>
     <br class="clear" />

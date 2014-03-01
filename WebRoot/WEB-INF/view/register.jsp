@@ -7,6 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="imagetoolbar" content="no" />
     <link rel="stylesheet" href="styles/layout.css" type="text/css" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <script language="JavaScript" type="text/javascript" src="script/jquery.js"></script>
 	<script language="JavaScript" type="text/javascript" src="script/jquery.corner.js"></script>
 	<script language="JavaScript" type="text/javascript" src="script/jVal.js"></script>
@@ -98,7 +99,7 @@
         <tr>
         <td></td>
         <td>
-        <textarea cols="80" rows="15" readonly="readonly">
+        <textarea cols="80" rows="15" readonly>
 
 最新修订日期：2013年12月6日
 

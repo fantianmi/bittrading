@@ -7,6 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="imagetoolbar" content="no" />
     <link rel="stylesheet" href="styles/layout.css" type="text/css" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <script language="JavaScript" type="text/javascript" src="script/jquery.js"></script>
 	<script language="JavaScript" type="text/javascript" src="script/jquery.corner.js"></script>
 	<script language="JavaScript" type="text/javascript" src="script/jVal.js"></script>
@@ -126,7 +127,7 @@
         <tr>
         <td></td>
         <td>
-        <textarea cols="20" rows="5" readonly="readonly">
+        <textarea cols="20" rows="5" readonly>
 
 风险提示：比特币的交易有极高的风险，它没有像中国股市那样的涨跌停限制，同时交易是24小时开放的。比特币由于筹码较少，价格易受到庄家控制，有可能出现一天价格涨几倍的情况，同时也可能出现一天内价格跌去一半的情况！入市须谨慎，一定注意控制好风险！
         </textarea>
